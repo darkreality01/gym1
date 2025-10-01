@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitFlex Gym | Transform Your Body</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff3e6c;
+            --secondary: #00c9ff;
+            --dark: #0f172a;
+            --light: #f8fafc;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(255, 62, 108, 0.5);
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 10px rgba(255, 62, 108, 0.7);
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup-content {
+            background: var(--dark);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        
+        .popup-overlay.active .popup-content {
+            transform: scale(1);
+        }
+        
+        .close-popup {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--light);
+            transition: color 0.3s ease;
+        }
+        
+        .close-popup:hover {
+            color: var(--primary);
+        }
+        
+        .announcement-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .announcement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gallery-item {
+            overflow: hidden;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .gallery-item img, .gallery-item video {
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover img, .gallery-item:hover video {
+            transform: scale(1.1);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(255, 62, 108, 0.3);
+        }
+        
+        .map-container {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-slate-800 py-4 sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <i class="fas fa-dumbbell text-white"></i>
+                </div>
+                <span class="text-xl font-bold glow-text">FitFlex</span>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="nav-link text-white hover:text-cyan-300 transition-colors">Home</a>
+                <a href="#about" class="nav-link text-white hover:text-cyan-300 transition-colors">About Us</a>
+                <a href="#gallery" class="nav-link text-white hover:text-cyan-300 transition-colors">Gallery</a>
+                <a href="#announcements" class="nav-link text-white hover:text-cyan-300 transition-colors">Announcements</a>
+                <a href="#enquiry" class="nav-link text-white hover:text-cyan-300 transition-colors">Enquiry Form</a>
+                <a href="#" id="admin-login-btn" class="nav-link text-white hover:text-cyan-300 transition-colors">Admin Login</a>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-slate-800 px-4 py-2">
+            <a href="#home" class="block py-2 text-white hover:text-cyan-300 transition-colors">Home</a>
+            <a href="#about" class="block py-2 text-white hover:text-cyan-300 transition-colors">About Us</a>
+            <a href="#gallery" class="block py-2 text-white hover:text-cyan-300 transition-colors">Gallery</a>
+            <a href="#announcements" class="block py-2 text-white hover:text-cyan-300 transition-colors">Announcements</a>
+            <a href="#enquiry" class="block py-2 text-white hover:text-cyan-300 transition-colors">Enquiry Form</a>
+            <a href="#" id="admin-login-btn-mobile" class="block py-2 text-white hover:text-cyan-300 transition-colors">Admin Login</a>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-900 to-slate-800 z-0"></div>
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center opacity-20 z-0"></div>
+        
+        <div class="container mx-auto px-4 z-10 text-center">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 fade-in">
+                TRANSFORM YOUR <span class="bg-gradient-to-r from-pink-500 to-cyan-500 bg-clip-text text-transparent">BODY</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-10 max-w-3xl mx-auto fade-in">
+                Join FitFlex Gym and achieve your fitness goals with our state-of-the-art facilities and expert trainers.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in">
+                <a href="#enquiry" class="btn-primary text-white font-bold py-3 px-8 rounded-full inline-block">
+                    JOIN NOW
+                </a>
+                <a href="#about" class="border-2 border-cyan-500 text-cyan-300 font-bold py-3 px-8 rounded-full inline-block hover:bg-cyan-500 hover:text-white transition-colors">
+                    LEARN MORE
+                </a>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+            <a href="#about" class="text-white text-2xl animate-bounce">
+                <i class="fas fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-20 bg-slate-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-16 section-title slide-in-left">ABOUT US</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="slide-in-left">
+                    <h3 class="text-3xl font-bold mb-6">Why Choose FitFlex?</h3>
+                    <p class="text-lg mb-6">
+                        At FitFlex Gym, we believe that fitness is a journey, not a destination. Our state-of-the-art facility is equipped with the latest fitness equipment and staffed by certified personal trainers dedicated to helping you achieve your goals.
+                    </p>
+                    <p class="text-lg mb-6">
+                        Whether you're a beginner or an experienced athlete, we offer personalized training programs, group classes, and nutritional guidance to ensure you get the results you want.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Modern equipment and spacious workout areas</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Certified personal trainers with expertise in various disciplines</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Group classes including Yoga, Zumba, and CrossFit</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Flexible membership options to suit your needs</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="slide-in-right relative">
+                    <div class="bg-gradient-to-r from-pink-500 to-cyan-500 rounded-2xl p-1 glow-effect">
+                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                             alt="Gym Interior" class="rounded-2xl w-full h-auto">
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 bg-slate-900 p-6 rounded-2xl shadow-lg">
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-cyan-400">5+</div>
+                            <div class="text-lg">Years of Excellence</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-20 bg-slate-900">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-16 section-title slide-in-left">GALLERY</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Gallery items will be populated by JavaScript from admin uploads -->
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                         alt="Weight Training" class="w-full h-64 object-cover rounded-lg">
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1534367507877-0edd93bd013b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                         alt="Cardio Zone" class="w-full h-64 object-cover rounded-lg">
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1075&q=80" 
+                         alt="Yoga Class" class="w-full h-64 object-cover rounded-lg">
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" 
+                         alt="CrossFit" class="w-full h-64 object-cover rounded-lg">
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                         alt="Zumba Class" class="w-full h-64 object-cover rounded-lg">
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                         alt="Personal Training" class="w-full h-64 object-cover rounded-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Announcements Section -->
+    <section id="announcements" class="py-20 bg-slate-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-16 section-title slide-in-left">ANNOUNCEMENTS</h2>
+            
+            <div class="max-w-4xl mx-auto space-y-8">
+                <!-- Announcements will be populated by JavaScript from admin -->
+                <div class="announcement-card bg-slate-900 p-6 rounded-xl shadow-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-2xl font-bold text-cyan-400">New Zumba Classes Starting Next Week!</h3>
+                        <span class="text-pink-500 font-semibold">June 15, 2023</span>
+                    </div>
+                    <p class="text-lg">
+                        We're excited to announce that we're adding three new Zumba classes to our weekly schedule starting next Monday. Get ready to dance your way to fitness!
+                    </p>
+                </div>
+                
+                <div class="announcement-card bg-slate-900 p-6 rounded-xl shadow-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-2xl font-bold text-cyan-400">Gym Closure on Independence Day</h3>
+                        <span class="text-pink-500 font-semibold">June 10, 2023</span>
+                    </div>
+                    <p class="text-lg">
+                        Please note that the gym will be closed on August 15th for Independence Day. We will resume regular hours on August 16th.
+                    </p>
+                </div>
+                
+                <div class="announcement-card bg-slate-900 p-6 rounded-xl shadow-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-2xl font-bold text-cyan-400">Summer Membership Special</h3>
+                        <span class="text-pink-500 font-semibold">May 28, 2023</span>
+                    </div>
+                    <p class="text-lg">
+                        Get 20% off on all annual memberships this summer! Offer valid until July 31st. Don't miss this opportunity to achieve your fitness goals.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enquiry Form Section -->
+    <section id="enquiry" class="py-20 bg-slate-900">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-16 section-title slide-in-left">ENQUIRY FORM</h2>
+            
+            <div class="max-w-2xl mx-auto bg-slate-800 p-8 rounded-2xl shadow-lg">
+                <form id="enquiry-form">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="name" class="block mb-2 font-medium">Full Name</label>
+                            <input type="text" id="name" name="name" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg form-input focus:outline-none focus:border-cyan-500" required>
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block mb-2 font-medium">Email Address</label>
+                            <input type="email" id="email" name="email" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg form-input focus:outline-none focus:border-cyan-500" required>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="phone" class="block mb-2 font-medium">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg form-input focus:outline-none focus:border-cyan-500" required>
+                        </div>
+                        
+                        <div>
+                            <label for="interest" class="block mb-2 font-medium">Area of Interest</label>
+                            <select id="interest" name="interest" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg form-input focus:outline-none focus:border-cyan-500" required>
+                                <option value="" disabled selected>Select an option</option>
+                                <option value="cardio">Cardio</option>
+                                <option value="strength">Strength Training</option>
+                                <option value="zumba">Zumba</option>
+                                <option value="crossfit">CrossFit</option>
+                                <option value="yoga">Yoga</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="other-interest-container" class="mb-6 hidden">
+                        <label for="other-interest" class="block mb-2 font-medium">Please specify</label>
+                        <input type="text" id="other-interest" name="other-interest" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg form-input focus:outline-none focus:border-cyan-500">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="message" class="block mb-2 font-medium">Message</label>
+                        <textarea id="message" name="message" rows="4" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg form-input focus:outline-none focus:border-cyan-500"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary text-white font-bold py-3 px-8 rounded-lg w-full">
+                        SUBMIT ENQUIRY
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Contact Us</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-cyan-400 mt-1 mr-4"></i>
+                            <p>123 Fitness Street, Health City, HC 12345</p>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-phone text-cyan-400 mt-1 mr-4"></i>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-envelope text-cyan-400 mt-1 mr-4"></i>
+                            <p>info@fitflexgym.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h4 class="text-xl font-bold mb-4">Follow Us</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center hover:bg-cyan-500 transition-colors">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center hover:bg-cyan-500 transition-colors">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center hover:bg-cyan-500 transition-colors">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center hover:bg-cyan-500 transition-colors">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Find Us</h3>
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.177631856649!2d-74.00594908459426!3d40.71278367933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a315c0f85c3%3A0x6489cf59d3aebe5e!2sFitness%20Street!5e0!3m2!1sen!2sus!4v1629996547890!5m2!1sen!2sus" 
+                            width="100%" 
+                            height="300" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-700 pt-8 text-center">
+                <p>&copy; 2023 FitFlex Gym. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Popup Offer -->
+    <div id="popup-overlay" class="popup-overlay">
+        <div class="popup-content">
+            <span id="close-popup" class="close-popup">
+                <i class="fas fa-times"></i>
+            </span>
+            <h3 class="text-2xl font-bold mb-4 text-center">SPECIAL OFFER!</h3>
+            <div class="mb-6">
+                <img id="popup-image" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                     alt="Special Offer" class="w-full h-48 object-cover rounded-lg">
+            </div>
+            <p class="text-lg text-center mb-6">
+                Join now and get <span class="font-bold text-cyan-400">20% OFF</span> on your first 3 months of membership!
+            </p>
+            <div class="text-center">
+                <a href="#enquiry" class="btn-primary text-white font-bold py-2 px-6 rounded-lg inline-block">
+                    CLAIM OFFER
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="popup-overlay">
+        <div class="popup-content">
+            <span id="close-admin-modal" class="close-popup">
+                <i class="fas fa-times"></i>
+            </span>
+            <h3 class="text-2xl font-bold mb-6 text-center">ADMIN LOGIN</h3>
+            <form id="admin-login-form">
+                <div class="mb-6">
+                    <label for="admin-username" class="block mb-2 font-medium">Username</label>
+                    <input type="text" id="admin-username" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg form-input focus:outline-none focus:border-cyan-500" required>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="admin-password" class="block mb-2 font-medium">Password</label>
+                    <input type="password" id="admin-password" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg form-input focus:outline-none focus:border-cyan-500" required>
+                </div>
+                
+                <button type="submit" class="btn-primary text-white font-bold py-3 px-8 rounded-lg w-full">
+                    LOGIN
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel (Hidden by default) -->
+    <div id="admin-panel" class="admin-section fixed inset-0 bg-slate-900 z-50 overflow-y-auto">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Admin Panel</h2>
+                <button id="logout-admin" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                    Logout
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Image/Video Upload Section -->
+                <div class="bg-slate-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-6">Upload Media</h3>
+                    <form id="media-upload-form">
+                        <div class="mb-4">
+                            <label class="block mb-2 font-medium">Media Type</label>
+                            <div class="flex space-x-4">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="media-type" value="image" checked class="form-radio text-cyan-500">
+                                    <span class="ml-2">Image</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="media-type" value="video" class="form-radio text-cyan-500">
+                                    <span class="ml-2">Video</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="media-file" class="block mb-2 font-medium">Select File</label>
+                            <input type="file" id="media-file" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="media-title" class="block mb-2 font-medium">Title</label>
+                            <input type="text" id="media-title" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg">
+                        </div>
+                        
+                        <button type="submit" class="btn-primary text-white font-bold py-2 px-6 rounded-lg w-full">
+                            UPLOAD
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Announcements Section -->
+                <div class="bg-slate-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-6">Create Announcement</h3>
+                    <form id="announcement-form">
+                        <div class="mb-4">
+                            <label for="announcement-title" class="block mb-2 font-medium">Title</label>
+                            <input type="text" id="announcement-title" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="announcement-content" class="block mb-2 font-medium">Content</label>
+                            <textarea id="announcement-content" rows="4" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary text-white font-bold py-2 px-6 rounded-lg w-full">
+                            CREATE ANNOUNCEMENT
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Enquiry Responses Section -->
+                <div class="bg-slate-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-6">Enquiry Responses</h3>
+                    <div class="max-h-80 overflow-y-auto">
+                        <div class="space-y-4">
+                            <!-- Enquiry responses will be populated here -->
+                            <div class="bg-slate-700 p-4 rounded-lg">
+                                <div class="flex justify-between mb-2">
+                                    <h4 class="font-bold">John Doe</h4>
+                                    <span class="text-sm text-slate-400">June 20, 2023</span>
+                                </div>
+                                <p class="text-sm mb-2">Email: john.doe@example.com</p>
+                                <p class="text-sm mb-2">Interest: Strength Training</p>
+                                <p class="text-sm">Looking for personal training sessions for weight loss.</p>
+                            </div>
+                            
+                            <div class="bg-slate-700 p-4 rounded-lg">
+                                <div class="flex justify-between mb-2">
+                                    <h4 class="font-bold">Jane Smith</h4>
+                                    <span class="text-sm text-slate-400">June 18, 2023</span>
+                                </div>
+                                <p class="text-sm mb-2">Email: jane.smith@example.com</p>
+                                <p class="text-sm mb-2">Interest: Yoga</p>
+                                <p class="text-sm">Interested in beginner yoga classes and schedule.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Uploaded Media Display -->
+            <div class="mt-12">
+                <h3 class="text-2xl font-bold mb-6">Uploaded Media</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Uploaded media items will be displayed here -->
+                    <div class="bg-slate-800 p-4 rounded-lg">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                             alt="Media" class="w-full h-32 object-cover rounded-lg mb-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Weight Training</span>
+                            <button class="text-red-500 hover:text-red-400">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Popup functionality
+            const popupOverlay = document.getElementById('popup-overlay');
+            const closePopup = document.getElementById('close-popup');
+            
+            // Show popup after page load
+            setTimeout(function() {
+                popupOverlay.classList.add('active');
+            }, 2000);
+            
+            // Close popup
+            closePopup.addEventListener('click', function() {
+                popupOverlay.classList.remove('active');
+            });
+            
+            // Close popup when clicking outside
+            popupOverlay.addEventListener('click', function(e) {
+                if (e.target === popupOverlay) {
+                    popupOverlay.classList.remove('active');
+                }
+            });
+            
+            // Admin login modal
+            const adminLoginBtn = document.getElementById('admin-login-btn');
+            const adminLoginBtnMobile = document.getElementById('admin-login-btn-mobile');
+            const adminLoginModal = document.getElementById('admin-login-modal');
+            const closeAdminModal = document.getElementById('close-admin-modal');
+            const adminLoginForm = document.getElementById('admin-login-form');
+            const adminPanel = document.getElementById('admin-panel');
+            const logoutAdmin = document.getElementById('logout-admin');
+            
+            // Show admin login modal
+            adminLoginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                adminLoginModal.classList.add('active');
+            });
+            
+            adminLoginBtnMobile.addEventListener('click', function(e) {
+                e.preventDefault();
+                adminLoginModal.classList.add('active');
+                mobileMenu.classList.add('hidden');
+            });
+            
+            // Close admin login modal
+            closeAdminModal.addEventListener('click', function() {
+                adminLoginModal.classList.remove('active');
+            });
+            
+            adminLoginModal.addEventListener('click', function(e) {
+                if (e.target === adminLoginModal) {
+                    adminLoginModal.classList.remove('active');
+                }
+            });
+            
+            // Admin login form submission
+            adminLoginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('admin-username').value;
+                const password = document.getElementById('admin-password').value;
+                
+                // Simple authentication (in a real app, this would be server-side)
+                if (username === 'admin' && password === 'admin123') {
+                    adminLoginModal.classList.remove('active');
+                    adminPanel.classList.add('active');
+                } else {
+                    alert('Invalid credentials. Try admin/admin123');
+                }
+            });
+            
+            // Admin logout
+            logoutAdmin.addEventListener('click', function() {
+                adminPanel.classList.remove('active');
+            });
+            
+            // Enquiry form other option
+            const interestSelect = document.getElementById('interest');
+            const otherInterestContainer = document.getElementById('other-interest-container');
+            
+            interestSelect.addEventListener('change', function() {
+                if (this.value === 'other') {
+                    otherInterestContainer.classList.remove('hidden');
+                } else {
+                    otherInterestContainer.classList.add('hidden');
+                }
+            });
+            
+            // Enquiry form submission
+            const enquiryForm = document.getElementById('enquiry-form');
+            
+            enquiryForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for your enquiry! We will contact you soon.');
+                enquiryForm.reset();
+                otherInterestContainer.classList.add('hidden');
+            });
+            
+            // Scroll animations
+            const fadeElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(element => {
+                observer.observe(element);
+            });
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Admin panel forms (simulated functionality)
+            const mediaUploadForm = document.getElementById('media-upload-form');
+            const announcementForm = document.getElementById('announcement-form');
+            
+            mediaUploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Media uploaded successfully! (This is a demo - no actual upload)');
+                mediaUploadForm.reset();
+            });
+            
+            announcementForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Announcement created successfully! (This is a demo - no actual creation)');
+                announcementForm.reset();
+            });
+        });
+    </script>
+</body>
+</html>
